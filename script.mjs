@@ -338,12 +338,21 @@ function clearMessages() {
     });
 }
 
-// Initialize when DOM is loaded
-document.addEventListener('DOMContentLoaded', initializeApp);
-
-// Add responsive preview handling
-window.addEventListener('resize', () => {
-    if (embedUrlInput.value) {
-        showPreview(embedUrlInput.value);
+// Export the main initialization function
+export function init() {
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializeApp);
+    } else {
+        initializeApp();
     }
-});
+    
+    // Add responsive preview handling
+    window.addEventListener('resize', () => {
+        if (embedUrlInput && embedUrlInput.value) {
+            showPreview(embedUrlInput.value);
+        }
+    });
+}
+
+// Auto-initialize if running as module
+init();
