@@ -1,265 +1,349 @@
-// YouTube Embed Link Generator Script
+// YouTube Embed URL Generator - ES Module Implementation
 
-class YouTubeEmbedGenerator {
-    constructor() {
-        this.initializeElements();
-        this.bindEvents();
+// DOM Elements
+let youtubeUrlInput;
+let parseUrlBtn;
+let copyUrlBtn;
+let embedUrlInput;
+let previewContainer;
+
+// Option elements
+let autoplay;
+let controls;
+let showinfo;
+let loop;
+let modestbranding;
+let startTime;
+let endTime;
+let privacyMode;
+let color;
+let rel;
+
+// Initialize the application
+function initializeApp() {
+    // Get DOM elements
+    youtubeUrlInput = document.getElementById('youtubeUrl');
+    parseUrlBtn = document.getElementById('parseUrl');
+    copyUrlBtn = document.getElementById('copyUrl');
+    embedUrlInput = document.getElementById('embedUrl');
+    previewContainer = document.getElementById('previewContainer');
+    
+    // Option elements
+    autoplay = document.getElementById('autoplay');
+    controls = document.getElementById('controls');
+    showinfo = document.getElementById('showinfo');
+    loop = document.getElementById('loop');
+    modestbranding = document.getElementById('modestbranding');
+    startTime = document.getElementById('startTime');
+    endTime = document.getElementById('endTime');
+    privacyMode = document.getElementById('privacyMode');
+    color = document.getElementById('color');
+    rel = document.getElementById('rel');
+
+    bindEvents();
+}
+
+// Bind event listeners
+function bindEvents() {
+    // URL parsing
+    parseUrlBtn.addEventListener('click', parseYouTubeUrl);
+    copyUrlBtn.addEventListener('click', copyToClipboard);
+    
+    // Live updating - listen to all form changes
+    youtubeUrlInput.addEventListener('input', handleLiveUpdate);
+    youtubeUrlInput.addEventListener('paste', () => {
+        setTimeout(handleLiveUpdate, 100);
+    });
+    
+    // Live update on all option changes
+    [autoplay, controls, showinfo, loop, modestbranding, privacyMode, color, rel].forEach(element => {
+        element.addEventListener('change', handleLiveUpdate);
+    });
+    
+    [startTime, endTime].forEach(element => {
+        element.addEventListener('input', handleLiveUpdate);
+    });
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', handleKeyboardShortcuts);
+}
+
+// Handle live updates
+function handleLiveUpdate() {
+    clearMessages();
+    generateEmbedUrl();
+}
+
+// Parse YouTube URL and extract parameters
+function parseYouTubeUrl() {
+    const url = youtubeUrlInput.value.trim();
+    if (!url) {
+        showMessage('Please enter a YouTube URL', 'error');
+        return;
     }
 
-    initializeElements() {
-        this.youtubeUrlInput = document.getElementById('youtubeUrl');
-        this.parseUrlBtn = document.getElementById('parseUrl');
-        this.generateBtn = document.getElementById('generateEmbed');
-        this.copyBtn = document.getElementById('copyCode');
-        this.outputSection = document.getElementById('output');
-        this.embedCodeTextarea = document.getElementById('embedCode');
-        this.previewContainer = document.getElementById('previewContainer');
+    try {
+        const urlObj = new URL(url);
+        const searchParams = urlObj.searchParams;
         
-        // Options
-        this.autoplay = document.getElementById('autoplay');
-        this.controls = document.getElementById('controls');
-        this.showinfo = document.getElementById('showinfo');
-        this.loop = document.getElementById('loop');
-        this.modestbranding = document.getElementById('modestbranding');
-        this.startTime = document.getElementById('startTime');
-        this.endTime = document.getElementById('endTime');
-        this.width = document.getElementById('width');
-        this.height = document.getElementById('height');
-        this.privacyMode = document.getElementById('privacyMode');
-    }
-
-    bindEvents() {
-        this.parseUrlBtn.addEventListener('click', () => this.parseYouTubeUrl());
-        this.generateBtn.addEventListener('click', () => this.generateEmbedCode());
-        this.copyBtn.addEventListener('click', () => this.copyToClipboard());
-        this.youtubeUrlInput.addEventListener('input', () => this.clearMessages());
-        this.youtubeUrlInput.addEventListener('paste', () => {
-            setTimeout(() => this.parseYouTubeUrl(), 100);
-        });
-    }
-
-    parseYouTubeUrl() {
-        const url = this.youtubeUrlInput.value.trim();
-        if (!url) {
-            this.showMessage('Please enter a YouTube URL', 'error');
-            return;
+        // Extract and set form values from URL parameters
+        if (searchParams.has('autoplay')) {
+            autoplay.checked = searchParams.get('autoplay') === '1';
         }
-
-        const videoId = this.extractVideoId(url);
-        if (!videoId) {
-            this.showMessage('Invalid YouTube URL. Please enter a valid YouTube video URL.', 'error');
-            return;
+        if (searchParams.has('controls')) {
+            controls.checked = searchParams.get('controls') !== '0';
         }
-
-        this.showMessage('YouTube URL parsed successfully!', 'success');
+        if (searchParams.has('showinfo')) {
+            showinfo.checked = searchParams.get('showinfo') !== '0';
+        }
+        if (searchParams.has('loop')) {
+            loop.checked = searchParams.get('loop') === '1';
+        }
+        if (searchParams.has('modestbranding')) {
+            modestbranding.checked = searchParams.get('modestbranding') === '1';
+        }
+        if (searchParams.has('start')) {
+            startTime.value = searchParams.get('start');
+        }
+        if (searchParams.has('end')) {
+            endTime.value = searchParams.get('end');
+        }
+        if (searchParams.has('color')) {
+            color.value = searchParams.get('color');
+        }
+        if (searchParams.has('rel')) {
+            rel.value = searchParams.get('rel');
+        }
         
-        // Extract timestamp if present in URL
-        const timestamp = this.extractTimestamp(url);
-        if (timestamp) {
-            this.startTime.value = timestamp;
-        }
-    }
-
-    extractVideoId(url) {
-        // YouTube URL patterns
-        const patterns = [
-            /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/v\/)([^&\n?#]+)/,
-            /youtube\.com\/watch\?.*v=([^&\n?#]+)/
-        ];
-
-        for (const pattern of patterns) {
-            const match = url.match(pattern);
-            if (match && match[1]) {
-                return match[1];
+        // Extract timestamp from t parameter
+        if (searchParams.has('t')) {
+            const tValue = searchParams.get('t');
+            const timeMatch = tValue.match(/(\d+)/);
+            if (timeMatch) {
+                startTime.value = timeMatch[1];
             }
         }
-        return null;
-    }
 
-    extractTimestamp(url) {
-        // Extract timestamp from URL (t=123s or start=123)
-        const timePatterns = [
-            /[?&]t=(\d+)/,
-            /[?&]start=(\d+)/,
-            /[?&]t=(\d+)s/
-        ];
-
-        for (const pattern of timePatterns) {
-            const match = url.match(pattern);
-            if (match && match[1]) {
-                return parseInt(match[1]);
-            }
-        }
-        return null;
-    }
-
-    generateEmbedCode() {
-        const url = this.youtubeUrlInput.value.trim();
-        if (!url) {
-            this.showMessage('Please enter a YouTube URL first', 'error');
-            return;
-        }
-
-        const videoId = this.extractVideoId(url);
-        if (!videoId) {
-            this.showMessage('Invalid YouTube URL', 'error');
-            return;
-        }
-
-        const embedUrl = this.buildEmbedUrl(videoId);
-        const embedCode = this.buildEmbedCode(embedUrl);
-
-        this.embedCodeTextarea.value = embedCode;
-        this.showPreview(embedUrl);
-        this.outputSection.style.display = 'block';
-        this.showMessage('Embed code generated successfully!', 'success');
-    }
-
-    buildEmbedUrl(videoId) {
-        const baseUrl = this.privacyMode.checked 
-            ? 'https://www.youtube-nocookie.com/embed/' 
-            : 'https://www.youtube.com/embed/';
-        
-        const params = new URLSearchParams();
-
-        // Player controls
-        if (this.autoplay.checked) params.set('autoplay', '1');
-        if (!this.controls.checked) params.set('controls', '0');
-        if (!this.showinfo.checked) params.set('showinfo', '0');
-        if (this.loop.checked) {
-            params.set('loop', '1');
-            params.set('playlist', videoId); // Required for loop to work
-        }
-        if (this.modestbranding.checked) params.set('modestbranding', '1');
-
-        // Timing
-        const startTime = parseInt(this.startTime.value);
-        if (startTime && startTime > 0) params.set('start', startTime.toString());
-        
-        const endTime = parseInt(this.endTime.value);
-        if (endTime && endTime > 0) params.set('end', endTime.toString());
-
-        const queryString = params.toString();
-        return baseUrl + videoId + (queryString ? '?' + queryString : '');
-    }
-
-    buildEmbedCode(embedUrl) {
-        const width = this.width.value || '560';
-        const height = this.height.value || '315';
-
-        return `<iframe width="${width}" height="${height}" src="${embedUrl}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>`;
-    }
-
-    showPreview(embedUrl) {
-        const width = Math.min(parseInt(this.width.value) || 560, 560);
-        const height = Math.min(parseInt(this.height.value) || 315, 315);
-        
-        this.previewContainer.innerHTML = `
-            <iframe width="${width}" height="${height}" src="${embedUrl}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-        `;
-    }
-
-    async copyToClipboard() {
-        const embedCode = this.embedCodeTextarea.value;
-        if (!embedCode) {
-            this.showMessage('No embed code to copy', 'error');
-            return;
-        }
-
-        try {
-            await navigator.clipboard.writeText(embedCode);
-            this.showMessage('Embed code copied to clipboard!', 'success');
-            
-            // Visual feedback
-            const originalText = this.copyBtn.textContent;
-            this.copyBtn.textContent = 'Copied!';
-            this.copyBtn.style.background = '#28a745';
-            
-            setTimeout(() => {
-                this.copyBtn.textContent = originalText;
-                this.copyBtn.style.background = '#28a745';
-            }, 2000);
-        } catch (err) {
-            // Fallback for older browsers
-            this.embedCodeTextarea.select();
-            document.execCommand('copy');
-            this.showMessage('Embed code copied to clipboard!', 'success');
-        }
-    }
-
-    showMessage(text, type) {
-        this.clearMessages();
-        
-        const message = document.createElement('div');
-        message.className = `message ${type}`;
-        message.textContent = text;
-        
-        const form = document.getElementById('embedForm');
-        form.insertBefore(message, form.firstChild);
-        
-        // Auto-remove success messages after 3 seconds
-        if (type === 'success') {
-            setTimeout(() => {
-                if (message.parentNode) {
-                    message.parentNode.removeChild(message);
-                }
-            }, 3000);
-        }
-    }
-
-    clearMessages() {
-        const messages = document.querySelectorAll('.message');
-        messages.forEach(message => {
-            if (message.parentNode) {
-                message.parentNode.removeChild(message);
-            }
-        });
+        showMessage('URL parameters parsed and applied to form!', 'success');
+        generateEmbedUrl();
+    } catch (error) {
+        showMessage('Invalid URL format', 'error');
     }
 }
 
-// Initialize the application when the DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
-    new YouTubeEmbedGenerator();
-});
+// Extract video/playlist ID from YouTube URL
+function extractVideoId(url) {
+    // Video URL patterns
+    const videoPatterns = [
+        /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/v\/)([^&\n?#]+)/,
+        /youtube\.com\/watch\?.*v=([^&\n?#]+)/
+    ];
 
-// Add some utility functions for enhanced user experience
-document.addEventListener('DOMContentLoaded', () => {
-    // Auto-resize textarea based on content
-    const textarea = document.getElementById('embedCode');
-    textarea.addEventListener('input', function() {
-        this.style.height = 'auto';
-        this.style.height = this.scrollHeight + 'px';
-    });
-
-    // Add keyboard shortcuts
-    document.addEventListener('keydown', (e) => {
-        // Ctrl/Cmd + Enter to generate embed code
-        if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
-            e.preventDefault();
-            document.getElementById('generateEmbed').click();
+    for (const pattern of videoPatterns) {
+        const match = url.match(pattern);
+        if (match && match[1]) {
+            return { type: 'video', id: match[1] };
         }
+    }
+    
+    return null;
+}
+
+// Extract playlist ID from YouTube URL
+function extractPlaylistId(url) {
+    const playlistPattern = /[?&]list=([^&\n?#]+)/;
+    const match = url.match(playlistPattern);
+    return match ? match[1] : null;
+}
+
+// Generate embed URL
+function generateEmbedUrl() {
+    const url = youtubeUrlInput.value.trim();
+    if (!url) {
+        embedUrlInput.value = '';
+        previewContainer.innerHTML = '<p>Enter a YouTube URL to see preview</p>';
+        return;
+    }
+
+    const videoInfo = extractVideoId(url);
+    const playlistId = extractPlaylistId(url);
+    
+    if (!videoInfo && !playlistId) {
+        showMessage('Invalid YouTube URL. Please enter a valid YouTube video or playlist URL.', 'error');
+        embedUrlInput.value = '';
+        previewContainer.innerHTML = '<p>Invalid URL</p>';
+        return;
+    }
+
+    let embedUrl;
+    
+    if (playlistId) {
+        // Handle playlist
+        embedUrl = buildPlaylistEmbedUrl(playlistId, videoInfo ? videoInfo.id : null);
+    } else if (videoInfo) {
+        // Handle individual video
+        embedUrl = buildVideoEmbedUrl(videoInfo.id);
+    }
+
+    embedUrlInput.value = embedUrl;
+    showPreview(embedUrl);
+    clearMessages();
+}
+
+// Build video embed URL
+function buildVideoEmbedUrl(videoId) {
+    const baseUrl = privacyMode.checked 
+        ? 'https://www.youtube-nocookie.com/embed/' 
+        : 'https://www.youtube.com/embed/';
+    
+    const params = new URLSearchParams();
+
+    // Player controls
+    if (autoplay.checked) params.set('autoplay', '1');
+    if (!controls.checked) params.set('controls', '0');
+    if (!showinfo.checked) params.set('showinfo', '0');
+    if (loop.checked) {
+        params.set('loop', '1');
+        params.set('playlist', videoId); // Required for loop to work
+    }
+    if (modestbranding.checked) params.set('modestbranding', '1');
+
+    // Display options
+    if (color.value !== 'white') params.set('color', color.value);
+    if (rel.value !== '1') params.set('rel', rel.value);
+
+    // Timing
+    const startTimeValue = parseInt(startTime.value);
+    if (startTimeValue && startTimeValue > 0) params.set('start', startTimeValue.toString());
+    
+    const endTimeValue = parseInt(endTime.value);
+    if (endTimeValue && endTimeValue > 0) params.set('end', endTimeValue.toString());
+
+    const queryString = params.toString();
+    return baseUrl + videoId + (queryString ? '?' + queryString : '');
+}
+
+// Build playlist embed URL
+function buildPlaylistEmbedUrl(playlistId, videoId = null) {
+    const baseUrl = privacyMode.checked 
+        ? 'https://www.youtube-nocookie.com/embed/' 
+        : 'https://www.youtube.com/embed/';
+    
+    const params = new URLSearchParams();
+    params.set('listType', 'playlist');
+    params.set('list', playlistId);
+
+    // If we have a specific video, use it as the starting video
+    if (videoId) {
+        params.set('index', '1'); // Start with first video by default
+    }
+
+    // Player controls
+    if (autoplay.checked) params.set('autoplay', '1');
+    if (!controls.checked) params.set('controls', '0');
+    if (!showinfo.checked) params.set('showinfo', '0');
+    if (loop.checked) params.set('loop', '1');
+    if (modestbranding.checked) params.set('modestbranding', '1');
+
+    // Display options
+    if (color.value !== 'white') params.set('color', color.value);
+    if (rel.value !== '1') params.set('rel', rel.value);
+
+    // Timing (only start time is relevant for playlists)
+    const startTimeValue = parseInt(startTime.value);
+    if (startTimeValue && startTimeValue > 0) params.set('start', startTimeValue.toString());
+
+    const queryString = params.toString();
+    const path = videoId ? videoId : '';
+    return baseUrl + path + '?' + queryString;
+}
+
+// Show preview
+function showPreview(embedUrl) {
+    const previewWidth = Math.min(560, window.innerWidth - 40);
+    const previewHeight = Math.floor(previewWidth * 9 / 16); // 16:9 aspect ratio
+    
+    previewContainer.innerHTML = `
+        <iframe width="${previewWidth}" height="${previewHeight}" src="${embedUrl}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+    `;
+}
+
+// Copy URL to clipboard
+async function copyToClipboard() {
+    const embedUrl = embedUrlInput.value;
+    if (!embedUrl) {
+        showMessage('No URL to copy', 'error');
+        return;
+    }
+
+    try {
+        await navigator.clipboard.writeText(embedUrl);
+        showMessage('URL copied to clipboard!', 'success');
         
-        // Ctrl/Cmd + C when focused on output to copy code
-        if ((e.ctrlKey || e.metaKey) && e.key === 'c' && 
-            document.activeElement === document.getElementById('embedCode')) {
-            document.getElementById('copyCode').click();
+        // Visual feedback
+        const originalText = copyUrlBtn.textContent;
+        copyUrlBtn.textContent = 'Copied!';
+        copyUrlBtn.style.background = '#28a745';
+        
+        setTimeout(() => {
+            copyUrlBtn.textContent = originalText;
+            copyUrlBtn.style.background = '';
+        }, 2000);
+    } catch (err) {
+        // Fallback for older browsers
+        embedUrlInput.select();
+        document.execCommand('copy');
+        showMessage('URL copied to clipboard!', 'success');
+    }
+}
+
+// Handle keyboard shortcuts
+function handleKeyboardShortcuts(e) {
+    // Ctrl/Cmd + C when focused on URL output to copy
+    if ((e.ctrlKey || e.metaKey) && e.key === 'c' && 
+        document.activeElement === embedUrlInput) {
+        e.preventDefault();
+        copyToClipboard();
+    }
+}
+
+// Show message
+function showMessage(text, type) {
+    clearMessages();
+    
+    const message = document.createElement('div');
+    message.className = `message ${type}`;
+    message.textContent = text;
+    
+    const form = document.getElementById('embedForm');
+    form.insertBefore(message, form.firstChild);
+    
+    // Auto-remove success messages after 3 seconds
+    if (type === 'success') {
+        setTimeout(() => {
+            if (message.parentNode) {
+                message.parentNode.removeChild(message);
+            }
+        }, 3000);
+    }
+}
+
+// Clear messages
+function clearMessages() {
+    const messages = document.querySelectorAll('.message');
+    messages.forEach(message => {
+        if (message.parentNode) {
+            message.parentNode.removeChild(message);
         }
     });
+}
 
-    // Add tooltips for better UX
-    const tooltips = {
-        'autoplay': 'Video will start playing automatically when loaded',
-        'controls': 'Show/hide player controls (play, pause, volume, etc.)',
-        'showinfo': 'Show video title and uploader info',
-        'loop': 'Video will restart when it reaches the end',
-        'modestbranding': 'Reduces YouTube branding in the player',
-        'privacyMode': 'Uses youtube-nocookie.com for enhanced privacy'
-    };
+// Initialize when DOM is loaded
+document.addEventListener('DOMContentLoaded', initializeApp);
 
-    Object.entries(tooltips).forEach(([id, tooltip]) => {
-        const element = document.getElementById(id);
-        if (element) {
-            element.parentElement.title = tooltip;
-        }
-    });
+// Add responsive preview handling
+window.addEventListener('resize', () => {
+    if (embedUrlInput.value) {
+        showPreview(embedUrlInput.value);
+    }
 });

@@ -3,22 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YouTube Embed Link Generator</title>
+    <title>YouTube Embed URL Generator</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>YouTube Embed Link Generator</h1>
-            <p>Generate customized YouTube embed codes with player options</p>
+            <h1>YouTube Embed URL Generator</h1>
+            <p>Generate customized YouTube embed URLs with player options</p>
         </header>
 
         <main>
             <form id="embedForm" class="form-section">
-                <div class="input-group">
-                    <label for="youtubeUrl">YouTube URL:</label>
-                    <input type="url" id="youtubeUrl" placeholder="https://www.youtube.com/watch?v=..." required>
-                    <button type="button" id="parseUrl">Parse URL</button>
+                <!-- URL Input and Output at top -->
+                <div class="url-section">
+                    <div class="input-group">
+                        <label for="youtubeUrl">YouTube URL:</label>
+                        <input type="url" id="youtubeUrl" placeholder="https://www.youtube.com/watch?v=... or https://www.youtube.com/playlist?list=..." required>
+                        <button type="button" id="parseUrl">Parse URL</button>
+                    </div>
+
+                    <div class="output-group">
+                        <label for="embedUrl">Generated Embed URL:</label>
+                        <input type="text" id="embedUrl" readonly placeholder="Generated URL will appear here...">
+                        <button type="button" id="copyUrl">Copy URL</button>
+                    </div>
                 </div>
 
                 <div class="options-grid">
@@ -42,6 +51,21 @@
                     </div>
 
                     <div class="option-group">
+                        <h3>Display Options</h3>
+                        <label for="color">Color:</label>
+                        <select id="color">
+                            <option value="white" selected>White</option>
+                            <option value="red">Red</option>
+                        </select>
+                        
+                        <label for="rel">Related Videos:</label>
+                        <select id="rel">
+                            <option value="0" selected>Limited (same channel)</option>
+                            <option value="1">Show all related videos</option>
+                        </select>
+                    </div>
+
+                    <div class="option-group">
                         <h3>Timing</h3>
                         <label for="startTime">Start Time (seconds):</label>
                         <input type="number" id="startTime" min="0" placeholder="0">
@@ -51,33 +75,16 @@
                     </div>
 
                     <div class="option-group">
-                        <h3>Dimensions</h3>
-                        <label for="width">Width:</label>
-                        <input type="number" id="width" value="560" min="1">
-                        
-                        <label for="height">Height:</label>
-                        <input type="number" id="height" value="315" min="1">
-                    </div>
-
-                    <div class="option-group">
                         <h3>Privacy</h3>
                         <label>
-                            <input type="checkbox" id="privacyMode"> Privacy Enhanced Mode
+                            <input type="checkbox" id="privacyMode" checked> Privacy Enhanced Mode
                             <small>Uses youtube-nocookie.com domain</small>
                         </label>
                     </div>
                 </div>
-
-                <button type="button" id="generateEmbed" class="generate-btn">Generate Embed Code</button>
             </form>
 
-            <div id="output" class="output-section" style="display: none;">
-                <h3>Generated Embed Code:</h3>
-                <div class="code-container">
-                    <textarea id="embedCode" readonly></textarea>
-                    <button type="button" id="copyCode">Copy to Clipboard</button>
-                </div>
-                
+            <div id="preview" class="preview-section">
                 <h3>Preview:</h3>
                 <div id="previewContainer" class="preview-container">
                     <!-- Embed preview will be inserted here -->
@@ -86,7 +93,7 @@
         </main>
 
         <footer>
-            <p>Generate custom YouTube embed codes with various player options. Perfect for developers and content creators.</p>
+            <p>Generate custom YouTube embed URLs with various player options. Perfect for developers and content creators.</p>
         </footer>
     </div>
 
