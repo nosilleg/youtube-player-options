@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Embed URL Generator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>YouTube Embed URL Generator</h1>
+            <p>Generate customized YouTube embed URLs with player options</p>
+        </header>
+
+        <main>
+            <form id="embedForm" class="form-section">
+                <!-- URL Input and Output at top -->
+                <div class="url-section">
+                    <div class="input-group">
+                        <label for="youtubeUrl">YouTube URL:</label>
+                        <input type="url" id="youtubeUrl" placeholder="https://www.youtube.com/watch?v=... or https://www.youtube.com/playlist?list=..." required>
+                        <button type="button" id="parseUrl">Parse URL</button>
+                    </div>
+
+                    <div class="output-group">
+                        <label for="embedUrl">Generated Embed URL:</label>
+                        <input type="text" id="embedUrl" readonly placeholder="Generated URL will appear here...">
+                        <button type="button" id="copyUrl">Copy URL</button>
+                    </div>
+                </div>
+
+                <div class="options-grid">
+                    <div class="option-group">
+                        <h3>Player Controls</h3>
+                        <label>
+                            <input type="checkbox" id="autoplay"> Autoplay
+                        </label>
+                        <label>
+                            <input type="checkbox" id="controls" checked> Show Controls
+                        </label>
+                        <label>
+                            <input type="checkbox" id="showinfo"> Show Video Info
+                        </label>
+                        <label>
+                            <input type="checkbox" id="loop"> Loop Video
+                        </label>
+                        <label>
+                            <input type="checkbox" id="modestbranding"> Modest Branding
+                        </label>
+                    </div>
+
+                    <div class="option-group">
+                        <h3>Display Options</h3>
+                        <label for="color">Color:</label>
+                        <select id="color">
+                            <option value="white" selected>White</option>
+                            <option value="red">Red</option>
+                        </select>
+                        
+                        <label for="rel">Related Videos:</label>
+                        <select id="rel">
+                            <option value="0" selected>Limited (same channel)</option>
+                            <option value="1">Show all related videos</option>
+                        </select>
+                    </div>
+
+                    <div class="option-group">
+                        <h3>Timing</h3>
+                        <label for="startTime">Start Time (seconds):</label>
+                        <input type="number" id="startTime" min="0" placeholder="0">
+                        
+                        <label for="endTime">End Time (seconds):</label>
+                        <input type="number" id="endTime" min="0" placeholder="Leave empty for full video">
+                    </div>
+
+                    <div class="option-group">
+                        <h3>Privacy</h3>
+                        <label>
+                            <input type="checkbox" id="privacyMode" checked> Privacy Enhanced Mode
+                            <small>Uses youtube-nocookie.com domain</small>
+                        </label>
+                    </div>
+                </div>
+            </form>
+
+            <div id="preview" class="preview-section">
+                <h3>Preview:</h3>
+                <div id="previewContainer" class="preview-container">
+                    <!-- Embed preview will be inserted here -->
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Generate custom YouTube embed URLs with various player options. Perfect for developers and content creators.</p>
+        </footer>
+    </div>
+
+    <script type="module" src="script.mjs"></script>
+</body>
+</html>
