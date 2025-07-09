@@ -1,0 +1,19 @@
+{
+  "name": "Node.js",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:22-bookworm",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "EditorConfig.EditorConfig",
+        "esbenp.prettier-vscode",
+        "github.vscode-github-actions",
+        "ms-azuretools.vscode-docker",
+        "ms-playwright.playwright",
+        "ms-vscode.live-server",
+        "oscarotero.vento-syntax",
+        "stylelint.vscode-stylelint",
+        "yuyinws.vscode-array-index"
+      ]
+    }
+  }
+}

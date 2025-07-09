@@ -1,0 +1,40 @@
+{
+  "scripts": {
+    "build": "node --loader ts-node/esm src/server/generate-site.mts",
+    "eslint:check": "npx eslint .",
+    "git:pre-commit": "npm install && npm run test && npm run eslint:check && npm run stylelint:check && npm run prettier:debug-check && npm run prettier:write",
+    "playwright:install": "npx playwright install --with-deps",
+    "playwright:show-report": "npx playwright show-report",
+    "playwright:test": "npm run playwright:install && npx playwright test",
+    "prettier:check": "npx prettier . --check",
+    "prettier:debug-check": "npx prettier . --debug-check",
+    "prettier:write": "npx prettier . --write",
+    "renovate:config-check": "npx --yes --package renovate -- renovate-config-validator --strict",
+    "serve:dist": "npx http-server dist --port 8080 --silent",
+    "stylelint:check": "npx stylelint --config ./stylelint.config.mjs \"**/*.css\"",
+    "stylelint:fix": "npx stylelint --config ./stylelint.config.mjs --fix \"**/*.css\"",
+    "test": "npm run test:unit && npm run test:e2e",
+    "test:e2e": "npm run playwright:test",
+    "test:unit": "npm run vitest:run",
+    "vitest:run": "npx vitest run"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.53.2",
+    "@types/node": "24.0.12",
+    "@typescript-eslint/eslint-plugin": "8.36.0",
+    "eslint-config-prettier": "10.1.5",
+    "eslint-plugin-import": "2.32.0",
+    "eslint-plugin-jsdoc": "51.3.4",
+    "eslint-plugin-promise": "7.2.1",
+    "eslint-plugin-unicorn": "59.0.1",
+    "http-server": "14.1.1",
+    "jiti": "2.4.2",
+    "jsdom": "26.1.0",
+    "playwright": "1.53.2",
+    "prettier": "3.6.2",
+    "stylelint": "16.21.1",
+    "stylelint-config-standard": "38.0.0",
+    "ts-node": "10.9.2",
+    "vitest": "3.2.4"
+  }
+}

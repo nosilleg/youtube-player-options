@@ -32,12 +32,14 @@ A simple, single-page web application that allows users to easily generate custo
 ## Supported YouTube URL Formats
 
 ### Videos
+
 - `https://www.youtube.com/watch?v=VIDEO_ID`
 - `https://youtu.be/VIDEO_ID`
 - `https://www.youtube.com/embed/VIDEO_ID`
 - `https://www.youtube.com/v/VIDEO_ID`
 
 ### Playlists
+
 - `https://www.youtube.com/playlist?list=PLAYLIST_ID`
 - `https://www.youtube.com/watch?v=VIDEO_ID&list=PLAYLIST_ID`
 
@@ -46,18 +48,29 @@ The tool automatically extracts timestamp and parameter information from URLs wi
 ## Example Usage
 
 Input URL:
+
 ```
 https://www.youtube.com/watch?v=dQw4w9WgXcQ&t=30
 ```
 
 Generated embed URL:
+
 ```
 https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?showinfo=0&rel=0&start=30
 ```
 
 Use in HTML:
+
 ```html
-<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?showinfo=0&rel=0&start=30" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+<iframe
+  width="560"
+  height="315"
+  src="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?showinfo=0&rel=0&start=30"
+  title="YouTube video player"
+  frameborder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+  allowfullscreen
+></iframe>
 ```
 
 ## Keyboard Shortcuts
