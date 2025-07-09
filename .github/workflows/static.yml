@@ -40,8 +40,6 @@ jobs:
           cache: "npm"
       - name: Install dependencies
         run: npm install --prefer-offline --no-audit --progress=false
-      - name: Run Playwright tests
-        run: npm run playwright:test
       - name: Run ESLint
         run: npm run eslint:check
       - name: Run Stylelint
@@ -52,6 +50,8 @@ jobs:
         run: npm run renovate:config-check
       - name: Build project
         run: npm run build
+      - name: Run Playwright tests
+        run: npm run playwright:test
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
