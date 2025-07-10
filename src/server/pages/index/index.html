@@ -47,13 +47,30 @@
               <label>
                 <input type="checkbox" id="controls" checked /> Show Controls
               </label>
-              <label>
-                <input type="checkbox" id="showinfo" /> Show Video Info
-              </label>
               <label> <input type="checkbox" id="loop" /> Loop Video </label>
               <label>
-                <input type="checkbox" id="modestbranding" /> Modest Branding
+                <input type="checkbox" id="disablekb" /> Disable Keyboard
+                Controls
               </label>
+              <label>
+                <input type="checkbox" id="enablejsapi" /> Enable JS API
+              </label>
+              <label>
+                <input type="checkbox" id="fs" checked /> Allow Fullscreen
+              </label>
+              <label>
+                <input type="checkbox" id="playsinline" /> Play Inline (iOS)
+              </label>
+              <label>
+                <input type="checkbox" id="cc_load_policy" /> Force Captions On
+              </label>
+              <label for="cc_lang_pref">Captions Language:</label>
+              <input
+                type="text"
+                id="cc_lang_pref"
+                placeholder="e.g. en, es, fr"
+                maxlength="2"
+              />
             </div>
 
             <div class="option-group">
@@ -69,19 +86,60 @@
                 <option value="0" selected>Limited (same channel)</option>
                 <option value="1">Show all related videos</option>
               </select>
+
+              <label for="iv_load_policy">Annotations:</label>
+              <select id="iv_load_policy">
+                <option value="1" selected>Show</option>
+                <option value="3">Hide</option>
+              </select>
+
+              <label for="listType">List Type:</label>
+              <select id="listType">
+                <option value="">None</option>
+                <option value="playlist">Playlist</option>
+                <option value="user_uploads">User Uploads</option>
+              </select>
             </div>
 
             <div class="option-group">
               <h3>Timing</h3>
-              <label for="startTime">Start Time (seconds):</label>
-              <input type="number" id="startTime" min="0" placeholder="0" />
+              <label for="start">Start Time (seconds):</label>
+              <input type="number" id="start" min="0" placeholder="0" />
 
-              <label for="endTime">End Time (seconds):</label>
+              <label for="end">End Time (seconds):</label>
               <input
                 type="number"
-                id="endTime"
+                id="end"
                 min="0"
                 placeholder="Leave empty for full video"
+              />
+            </div>
+
+            <div class="option-group">
+              <h3>Advanced</h3>
+              <label for="hl">Interface Language:</label>
+              <input
+                type="text"
+                id="hl"
+                placeholder="e.g. en, es, fr"
+                maxlength="2"
+              />
+
+              <label for="origin">Origin (for JS API):</label>
+              <input
+                type="text"
+                id="origin"
+                placeholder="https://yourdomain.com"
+              />
+
+              <label for="playlist">Playlist IDs (comma separated):</label>
+              <input type="text" id="playlist" placeholder="PL..." />
+
+              <label for="widget_referrer">Widget Referrer:</label>
+              <input
+                type="text"
+                id="widget_referrer"
+                placeholder="https://referrer.com"
               />
             </div>
 

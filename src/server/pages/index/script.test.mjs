@@ -3,11 +3,28 @@ import { forTestingOnly } from "./script.mjs";
 
 const { extractVideoId, extractPlaylistId } = forTestingOnly;
 
+const testVideoId = "jNQXAC9IVRw";
+
 describe("extractVideoId", () => {
-  it("should extract video ID from a standard YouTube URL", () => {
-    const url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
+  it.concurrent.for([
+    `https://www.youtube.com/watch?v=${testVideoId}`,
+    `https://www.youtube.com/watch?v=${testVideoId}#t=10s`,
+    `https://www.youtube.com/watch?v=${testVideoId}&t=10s`,
+    `https://www.youtube.com/watch?v=${testVideoId}&feature=related`,
+    `https://www.youtube.com/embed/${testVideoId}`,
+    `https://www.youtube.com/v/${testVideoId}`,
+    `https://youtu.be/${testVideoId}`,
+    `https://youtu.be/${testVideoId}?t=42`,
+    `https://www.youtube-nocookie.com/embed/${testVideoId}`,
+  ])("should extract video ID from various YouTube URLs: %s", (url) => {
     const result = extractVideoId(url);
-    expect(result).toBe("dQw4w9WgXcQ");
+    expect(result).toBe(testVideoId);
+  });
+
+  it("should return null for a URL without a video ID", () => {
+    const url = "https://www.youtube.com/";
+    const result = extractVideoId(url);
+    expect(result).toBeNull();
   });
 
   it("should return null for an invalid URL", () => {
