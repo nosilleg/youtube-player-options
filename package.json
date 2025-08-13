@@ -21,7 +21,7 @@
   "devDependencies": {
     "@playwright/test": "1.54.2",
     "@types/node": "24.2.1",
-    "@typescript-eslint/eslint-plugin": "8.36.0",
+    "@typescript-eslint/eslint-plugin": "8.39.1",
     "eslint-config-prettier": "10.1.8",
     "eslint-plugin-import": "2.32.0",
     "eslint-plugin-jsdoc": "54.0.0",
