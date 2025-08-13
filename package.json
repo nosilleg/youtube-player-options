@@ -22,7 +22,7 @@
     "@playwright/test": "1.54.2",
     "@types/node": "24.0.12",
     "@typescript-eslint/eslint-plugin": "8.36.0",
-    "eslint-config-prettier": "10.1.5",
+    "eslint-config-prettier": "10.1.8",
     "eslint-plugin-import": "2.32.0",
     "eslint-plugin-jsdoc": "51.3.4",
     "eslint-plugin-promise": "7.2.1",
