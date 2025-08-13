@@ -19,7 +19,7 @@
     "vitest:run": "npx vitest run"
   },
   "devDependencies": {
-    "@playwright/test": "1.53.2",
+    "@playwright/test": "1.54.2",
     "@types/node": "24.0.12",
     "@typescript-eslint/eslint-plugin": "8.36.0",
     "eslint-config-prettier": "10.1.5",
@@ -30,7 +30,7 @@
     "http-server": "14.1.1",
     "jiti": "2.4.2",
     "jsdom": "26.1.0",
-    "playwright": "1.53.2",
+    "playwright": "1.54.2",
     "prettier": "3.6.2",
     "stylelint": "16.21.1",
     "stylelint-config-standard": "38.0.0",
